@@ -1,0 +1,104 @@
+#include <iostream>
+#include <cmath>
+using namespace std;
+
+string binify(int n) {
+    string binary = "";
+    int cpy = abs(n);
+    int length = 5;
+
+    while(cpy > 0) {
+        binary = to_string(cpy % 2) + binary; 
+        cpy /= 2;
+    }
+
+    while(binary.length() < length) { //length
+        binary = "0" + binary;
+    }
+
+    if(n < 0) {
+        for(auto &i : binary){
+            if(i == '0') i = '1';
+            else i = '0';
+        }
+
+        char carry = '1';
+
+        for(int i = binary.length() - 1; i >= 0; i--) {
+            if(binary[i] == '1' && carry == '1' ) {
+                binary[i] = '0';
+            }
+            else if(binary[i] == '0' && carry == '1') {
+                binary[i] = '1';
+                carry = '0';
+            }
+        }
+        if(carry == '1') {
+            binary = "1" + binary;
+        }
+    }
+    if(binary.length() > length) cout<<"no. was too long to represent with "<<length<<" bits"<<endl;
+
+    return binary;
+}
+
+string addition(string bin1, string bin2) {
+    bool overflow = 0;
+    if(bin1.size() != bin2.size()) overflow = 1;
+    if(overflow) {
+        int maxS = max(bin1.length(), bin2.length());
+        bool smaller = 0; //0 means bin1 is smaller
+        if(maxS == bin1.length()) smaller = 1;
+
+        if(!smaller) {
+            while(bin1.length() < maxS) {
+                bin1 = "0" + bin1;
+            }
+        }
+        else {
+            while(bin2.length() < maxS) {
+                bin2 = "0" + bin2;
+            }
+        }
+    }
+
+    string sum = "";
+    char carry = '0';
+
+    int length = bin1.length();
+
+    for(int i = length - 1; i >= 0; i--) {
+        int bit1 = bin1[i] - '0';
+        int bit2 = bin2[i] - '0';
+        int c = carry - '0';
+        
+        int total = bit1 + bit2 + c;
+        
+        sum = to_string(total % 2) + sum;
+        carry = (total >= 2) ? '1' : '0';
+    }
+
+    if(carry == '1') sum = "1" + sum;
+    int curSize = sum.length();
+    if(curSize > 5) {
+        sum.erase(0, curSize - 5);
+    }
+    return sum;
+}
+
+
+int main() {
+    int n1, n2;
+    cin>>n1 >> n2;
+    string b1 = binify(n1);
+    string b2 = binify(n2);
+
+    string sum = addition(b1, b2);
+    cout<<b1<<"\n"<<b2<<endl;
+    cout<<sum<<endl;
+    if((b1[0] == b2[0]) && (b1[0] != sum[0])) {
+        cout<<"overflow";
+    }
+
+    return 0;
+}
