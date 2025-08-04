@@ -86,6 +86,31 @@ string addition(string bin1, string bin2) {
     return sum;
 }
 
+int bintoInt(string s) {
+    int res = 0;
+    bool neg = 0;
+    if(s[0] == '1')  {
+        int ptr = 4;
+        while(s[ptr--] != '1');
+        ptr++;
+        s[ptr] = '0';
+        while(ptr < 5) {
+            s[++ptr] = '1';
+        }
+        for(int i = 0; i < 5; i++) {
+            if(s[i] == '1') s[i] = '0';
+            else s[i] = '1';
+        }
+        neg = 1;
+    }
+    
+    for(int i = s.size() - 1, count = 0; i >= 0; i--, count++) {
+        res += pow(2, count) * (s[i] - '0');
+    }
+    
+    return neg?-res:res;
+}
+
 
 int main() {
     int n1, n2;
@@ -97,8 +122,10 @@ int main() {
     cout<<b1<<"\n"<<b2<<endl;
     cout<<sum<<endl;
     if((b1[0] == b2[0]) && (b1[0] != sum[0])) {
-        cout<<"overflow";
+        cout<<"overflow" << endl;
     }
+    
+    cout<<bintoInt(sum);
 
     return 0;
 }
